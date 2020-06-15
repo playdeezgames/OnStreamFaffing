@@ -17,6 +17,7 @@ LPCWSTR gameTitle = L"Zig-Zag";
 LPCWSTR turnSound = L"turn.wav";
 LPCWSTR deathSound = L"death.wav";
 LPCWSTR startMessage = L"Press <SPACE> to Start!";
+LPCWSTR mutedMessage = L"MUTED";
 LPCWSTR muteMessage = L"[M] to toggle sound";
 LPCWSTR scoreFormat = L"Score: %d";
 LPCWSTR highScoreFormat = L"Hi Score: %d";
@@ -73,7 +74,9 @@ void RedrawScreen(HDC hdc)
     SetRect(&rc, SCREEN_WIDTH - CELL_WIDTH, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
     FillRect(hdc, &rc, blueBrush);
 
-    SetTextColor(hdc, RGB(0, 255, 0));
+    highScore = (score > highScore) ? (score) : highScore;
+
+    SetTextColor(hdc, (score==highScore) ? (RGB(0, 255, 255)) : (RGB(0, 255, 0)));
     SetBkColor(hdc, RGB(0, 0, 0));
 
     SetRect(&rc, CELL_WIDTH, 0, SCREEN_WIDTH/2, CELL_HEIGHT);
@@ -81,18 +84,22 @@ void RedrawScreen(HDC hdc)
     wsprintfW(buffer, scoreFormat, score);
     DrawTextW(hdc, buffer, -1, &rc, DT_LEFT | DT_VCENTER);
 
-    highScore = (score > highScore) ? (score) : highScore;
-
     SetRect(&rc, SCREEN_WIDTH / 2, 0, SCREEN_WIDTH - CELL_WIDTH, CELL_HEIGHT);
     wsprintfW(buffer, highScoreFormat, highScore);
     DrawTextW(hdc, buffer, -1, &rc, DT_RIGHT | DT_VCENTER);
 
     if (gameState == GAME_OVER)
     {
+        SetTextColor(hdc, RGB(128, 0, 128));
         SetRect(&rc, 0, SCREEN_HEIGHT-CELL_HEIGHT, SCREEN_WIDTH , SCREEN_HEIGHT);
         DrawTextW(hdc, startMessage, -1, &rc, DT_CENTER | DT_VCENTER);
-        SetRect(&rc, 0, SCREEN_HEIGHT - CELL_HEIGHT*2, SCREEN_WIDTH, SCREEN_HEIGHT - CELL_HEIGHT);
+        SetRect(&rc, 0, SCREEN_HEIGHT - CELL_HEIGHT * 2, SCREEN_WIDTH, SCREEN_HEIGHT - CELL_HEIGHT);
         DrawTextW(hdc, muteMessage, -1, &rc, DT_CENTER | DT_VCENTER);
+        if (!soundEnabled)
+        {
+            SetRect(&rc, 0, SCREEN_HEIGHT - CELL_HEIGHT * 3, SCREEN_WIDTH, SCREEN_HEIGHT - CELL_HEIGHT * 2);
+            DrawTextW(hdc, mutedMessage, -1, &rc, DT_CENTER | DT_VCENTER);
+        }
     }
 
 }
