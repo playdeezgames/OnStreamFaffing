@@ -101,7 +101,6 @@ void RedrawScreen(HDC hdc)
             DrawTextW(hdc, mutedMessage, -1, &rc, DT_CENTER | DT_VCENTER);
         }
     }
-
 }
 
 void UpdateScreen(HWND hWnd)
